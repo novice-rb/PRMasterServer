@@ -1,4 +1,4 @@
-﻿using PRMasterServer.Data;
+using PRMasterServer.Data;
 using Reality.Net.Extensions;
 using Reality.Net.GameSpy.Servers;
 using System;
@@ -21,7 +21,8 @@ namespace PRMasterServer.Servers
 		public Action<string, string> Log = (x, y) => { };
 		public Action<string, string> LogError = (x, y) => { };
 
-		public Thread Thread;
+        public Thread Thread;
+        
 
 		private static Socket _socket;
 		private readonly ServerListReport _report;
@@ -30,32 +31,42 @@ namespace PRMasterServer.Servers
 		private AsyncCallback _socketSendCallback;
 		private AsyncCallback _socketDataReceivedCallback;
 
+       
+
 		public ServerListRetrieve(IPAddress listen, ushort port, ServerListReport report, Action<string, string> log, Action<string, string> logError)
 		{
 			Log = log;
 			LogError = logError;
-
+            logError("public","serverlistretrieve");
 			_report = report;
-			/*
-			_report.Servers.TryAdd("test", new List<GameServer>() {
+			//*
+			/*_report.Servers.TryAdd("test", 
 				new GameServer() {
 					Valid = true,
+                          
+             newgame=false,
+            staging=false,
+            mynumplayers=61,
+            maxnumplayers=139,
+            nummissing=78,
+            pitboss=false,
 					IPAddress = "192.168.1.2",
-					QueryPort = 29900,
+					QueryPort = 29300,
 					country = "AU",
-					hostname = "[PR v1.2.0.0] 42",
-					gamename = "battlefield2",
-					gamever = "1.5.3153-802.0",
+					hostname = "Teamer 35vs49",
+					gamename = "civ4",
+					gamever = "3.19",
 					mapname = "Awesome Map",
 					gametype = "gpm_cq",
 					gamevariant = "pr",
-					numplayers = 100,
-					maxplayers = 100,
+					numplayers = 61,
+					maxplayers = 183,
 					gamemode = "openplaying",
 					password = false,
 					timelimit = 14400,
 					roundtime = 1,
-					hostport = 16567,
+					hostport = 16567}
+                / *    ,
 					bf2_dedicated = true,
 					bf2_ranked = true,
 					bf2_anticheat = false,
@@ -87,13 +98,13 @@ namespace PRMasterServer.Servers
 					bf2_coopbotratio = 0,
 					bf2_coopbotcount = 0,
 					bf2_coopbotdiff = 0,
-					bf2_novehicles = false
-				}
-			});
+					bf2_novehicles = false* /
+				
+			);*/
 
 			IQueryable<GameServer> servers = _report.Servers.Select(x => x.Value).AsQueryable();
-			Console.WriteLine(servers.Where("gamever = '1.5.3153-802.0' and gamevariant = 'pr' and hostname like '%[[]PR v1.2.0.0% %' and hostname like '%2%'").Count());
-			*/
+		//	Console.WriteLine(servers.Where("gamever = '3.19' and gamevariant = 'pr' and hostname like '%[[]PR v1.2.0.0% %' and hostname like '%2%'").Count());
+		//	*/
 
 			Thread = new Thread(StartServer) {
 				Name = "Server Retrieving Socket Thread"
@@ -132,7 +143,7 @@ namespace PRMasterServer.Servers
 		private void StartServer(object parameter)
 		{
 			AddressInfo info = (AddressInfo)parameter;
-
+            
 			Log(Category, "Starting Server List Retrieval");
 
 			try {
@@ -172,6 +183,7 @@ namespace PRMasterServer.Servers
 			};
 			
 			WaitForData(state);
+            Console.WriteLine("ACCEPTCALLBACKPROCEDURE");
 		}
 
 		private void WaitForData(SocketState state)
@@ -215,16 +227,17 @@ namespace PRMasterServer.Servers
 				// take what we received, and append it to the received data buffer
 				state.ReceivedData.Append(Encoding.UTF8.GetString(state.Buffer, 0, received));
 				string receivedData = state.ReceivedData.ToString();
-				
+                LogError("OnDataReceived(ret)", receivedData);
 				// does what we received end with \x00\x00\x00\x00\x??
 				if (receivedData.Substring(receivedData.Length - 5, 4) == "\x00\x00\x00\x00") {
 					state.ReceivedData.Clear();
 
 					// lets split up the message based on the delimiter
 					string[] messages = receivedData.Split(new string[] { "\x00\x00\x00\x00" }, StringSplitOptions.RemoveEmptyEntries);
-
+                    //LogError(messages[1], messages[2]);
+                    //LogError(messages[3], messages[4]);
 					for (int i = 0; i < messages.Length; i++) {
-						if (messages[i].StartsWith("battlefield2")) {
+						if (messages[i].StartsWith("civ4"/*battlefield2*/)) {
 							if (ParseRequest(state, messages[i]))
 								return;
 						}
@@ -264,8 +277,9 @@ namespace PRMasterServer.Servers
 			WaitForData(state);
 		}
 
-		private void SendToClient(SocketState state, byte[] data)
+		public void SendToClient(SocketState state, byte[] data)
 		{
+            LogError("lel","shit's about to get sent");
 			if (state == null)
 				return;
 
@@ -279,17 +293,18 @@ namespace PRMasterServer.Servers
 				_socketSendCallback = OnSent;
 
 			try {
+                LogError("lel", "data");
 				state.Socket.BeginSend(data, 0, data.Length, SocketFlags.None, _socketSendCallback, state);
 			} catch (SocketException e) {
 				LogError(Category, "Error sending data");
 				LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
 			}
 		}
-
+    
 		private void OnSent(IAsyncResult async)
 		{
 			SocketState state = (SocketState)async.AsyncState;
-
+            LogError("pfpfpf","is sent");
 			if (state == null || state.Socket == null)
 				return;
 
@@ -314,11 +329,12 @@ namespace PRMasterServer.Servers
 
 		private bool ParseRequest(SocketState state, string message)
 		{
+            LogError("[SLR_PARSEREQUEST]", message);
 			string[] data = message.Split(new char[] { '\x00' }, StringSplitOptions.RemoveEmptyEntries);
 			if (data.Length != 4 ||
-				!data[0].Equals("battlefield2", StringComparison.InvariantCultureIgnoreCase) ||
+                !data[0].Equals("civ4"/*battlefield2*/, StringComparison.InvariantCultureIgnoreCase) ||
 				(
-					!data[1].Equals("battlefield2", StringComparison.InvariantCultureIgnoreCase) &&
+                    !data[1].Equals("civ4"/*battlefield2*/, StringComparison.InvariantCultureIgnoreCase) &&
 					!data[1].Equals("gslive", StringComparison.InvariantCultureIgnoreCase)
 				)
 			) {
@@ -347,8 +363,8 @@ namespace PRMasterServer.Servers
 
 			// http://aluigi.altervista.org/papers/gslist.cfg
 			byte[] key;
-			if (gamename == "battlefield2")
-				key = DataFunctions.StringToBytes("hW6m9a");
+            if (gamename == "civ4")/*battlefield2*/
+                key = DataFunctions.StringToBytes("y3D9Hw"/*"Cs2iIq"/*hW6m9a*/);
 			else if (gamename == "arma2oapc")
 				key = DataFunctions.StringToBytes("sGKWik");
 			else
@@ -357,6 +373,8 @@ namespace PRMasterServer.Servers
 			byte[] unencryptedServerList = PackServerList(state, servers, fields);
 			byte[] encryptedServerList = GSEncoding.Encode(key, DataFunctions.StringToBytes(validate), unencryptedServerList, unencryptedServerList.LongLength);
 			SendToClient(state, encryptedServerList);
+            //SendToClient(state, unencryptedServerList);
+            
 			return true;
 		}
 
@@ -366,19 +384,20 @@ namespace PRMasterServer.Servers
 
 			byte[] ipBytes = remoteEndPoint.Address.GetAddressBytes();
 			byte[] value2 = BitConverter.GetBytes((ushort)6500);
-			byte fieldsCount = (byte)fields.Length;
+			byte fieldsCount = (byte)(fields.Length);
 
 			List<byte> data = new List<byte>();
 			data.AddRange(ipBytes);
 			data.AddRange(BitConverter.IsLittleEndian ? value2.Reverse() : value2);
 			data.Add(fieldsCount);
 			data.Add(0);
-
-			foreach (var field in fields) {
+            Console.WriteLine("Packlist, checkpoint 1, fields count:");
+            Console.WriteLine(fieldsCount);
+            foreach (var field in fields) {
 				data.AddRange(DataFunctions.StringToBytes(field));
 				data.AddRange(new byte[] { 0, 0 });
 			}
-
+            Console.WriteLine("Packlist, checkpoint 2");
 			foreach (var server in servers) {
 				// commented this stuff out since it caused some issues on testing, might come back to it later and see what's happening...
 				// NAT traversal stuff...
@@ -412,8 +431,10 @@ namespace PRMasterServer.Servers
 				//}
 
 				data.Add(255);
-
+                Console.WriteLine("Packlist, checkpoint 3");
 				for (int i = 0; i < fields.Length; i++) {
+                    //Console.WriteLine(fields[i]);
+                    //if (fields[i] != "sv_punkbuster" && fields[i] != "pb" && fields[i] != "punkbuster")
 					data.AddRange(DataFunctions.StringToBytes(GetField(server, fields[i])));
 
 					if (i < fields.Length - 1)
@@ -424,14 +445,16 @@ namespace PRMasterServer.Servers
 			}
 
 			data.AddRange(new byte[] { 0, 255, 255, 255, 255 });
-
+            Console.WriteLine("Packlist, checkpoint 4");
 			return data.ToArray();
 		}
 
 		private static string GetField(GameServer server, string fieldName)
-		{
-			object value = server.GetType().GetProperty(fieldName).GetValue(server, null);
-			if (value == null)
+        {
+            
+                object value = server.GetType().GetProperty(fieldName).GetValue(server, null);
+           
+                if (value == null)
 				return String.Empty;
 			else if (value is Boolean)
 				return (bool)value ? "1" : "0";
@@ -645,7 +668,7 @@ namespace PRMasterServer.Servers
 			return isGroup;
 		}
 
-		private class SocketState : IDisposable
+		public class SocketState : IDisposable
 		{
 			public Socket Socket = null;
 			public byte[] Buffer = new byte[8192];
