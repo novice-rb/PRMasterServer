@@ -1,10 +1,11 @@
-﻿using PRMasterServer.Data;
+using PRMasterServer.Data;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+
 
 namespace PRMasterServer.Servers
 {
@@ -14,6 +15,7 @@ namespace PRMasterServer.Servers
 
 		public Action<string, string> Log = (x, y) => { };
 		public Action<string, string> LogError = (x, y) => { };
+        public Action<string, string> LogGreen = (x, y) => { };
 
 		public Thread ThreadClientManager;
 		public Thread ThreadSearchManager;
@@ -86,8 +88,8 @@ namespace PRMasterServer.Servers
 
 			try {
 				_clientManagerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp) {
-					SendTimeout = 30000,
-					ReceiveTimeout = 30000,
+					SendTimeout = 6000,//was 30000 originally
+                    ReceiveTimeout = 6000,//was 30000 originally
 					SendBufferSize = 8192,
 					ReceiveBufferSize = 8192,
 					Blocking = false
@@ -180,7 +182,7 @@ namespace PRMasterServer.Servers
 
 				if (state.Type == LoginSocketState.SocketType.Client) {
 					// ClientManager server sends data first
-					byte[] buffer = LoginServerMessages.GenerateServerChallenge(ref state);
+                    byte[] buffer = LoginServerMessages.GenerateServerChallenge(ref state);
 					SendToClient(ref state, buffer);
 
 					if (state != null) {
@@ -215,6 +217,7 @@ namespace PRMasterServer.Servers
 					state.SendCallback = OnSent;
 
 				state.Socket.BeginSend(data, 0, data.Length, SocketFlags.None, state.SendCallback, state);
+                LogError("data sent:", System.Text.Encoding.Default.GetString(data));
 				return true;
 			} catch (NullReferenceException) {
 				if (state != null)
@@ -326,8 +329,10 @@ namespace PRMasterServer.Servers
 				// does what we received contain the \final\ delimiter?
 				if (receivedData.LastIndexOf(@"\final\") > -1) {
 					state.ReceivedData.Clear();
-
-					// lets split up the message based on the delimiter
+                    LogError("data received:", receivedData);
+                    int lame = state.State;
+                    LogError("state.state:", lame.ToString() );//
+                    // lets split up the message based on the delimiter
 					string[] messages = receivedData.Split(new string[] { @"\final\" }, StringSplitOptions.RemoveEmptyEntries);
 
 					for (int i = 0; i < messages.Length; i++) {
@@ -377,18 +382,27 @@ namespace PRMasterServer.Servers
 
 			Log(Category, String.Format("[{0}] Received {1} query from: {2}:{3}", state.Type, query, ((IPEndPoint)state.Socket.RemoteEndPoint).Address, ((IPEndPoint)state.Socket.RemoteEndPoint).Port));
 
-			if (keyValues.ContainsKey("gamename") && !keyValues["gamename"].Equals("battlefield2", StringComparison.InvariantCultureIgnoreCase)) {
+            if (keyValues.ContainsKey("gamename") && !keyValues["gamename"].Equals("civ4", StringComparison.InvariantCultureIgnoreCase))
+            {
 				// say no to those not using bf2... Begone evil demon, bf2 for life!
+                //nop
+                Log("not bf2", "hmm");
 				return;
 			}
 
 			switch (state.Type) {
-				case LoginSocketState.SocketType.Client:
-					HandleClientManager(ref state, query, keyValues);
-					break;
-				case LoginSocketState.SocketType.Search:
-					HandleSearchManager(ref state, query, keyValues);
-					break;
+                case LoginSocketState.SocketType.Client:
+                    {
+                        HandleClientManager(ref state, query, keyValues);
+                        //Log("is of sockettype client","client");
+                    }
+                    break;
+                case LoginSocketState.SocketType.Search:
+                    {
+                        HandleSearchManager(ref state, query, keyValues);
+                        //Log("is of sockettype client", "client");
+                    }
+                    break;
 			}
 		}
 		
@@ -404,9 +418,12 @@ namespace PRMasterServer.Servers
 					state.StartKeepAlive(this);
 				} else if (query.Equals("newuser", StringComparison.InvariantCultureIgnoreCase)) {
 					SendToClient(ref state, LoginServerMessages.NewUser(ref state, keyValues));
-				}
+				} 
 			} else if (state.State == 2) {
-				if (query.Equals("getprofile", StringComparison.InvariantCultureIgnoreCase)) {
+                if (query.Equals("status", StringComparison.InvariantCultureIgnoreCase)) {
+                    LogError("STATUS SENT","1");
+                    //SendToClient(ref state, LoginServerMessages.StatusResponse(ref state, keyValues));
+				} else if (query.Equals("getprofile", StringComparison.InvariantCultureIgnoreCase)) {
 					SendToClient(ref state, LoginServerMessages.SendProfile(ref state, keyValues, false));
 				} else if (query.Equals("updatepro", StringComparison.InvariantCultureIgnoreCase)) {
 					LoginServerMessages.UpdateProfile(ref state, keyValues);
