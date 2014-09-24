@@ -5,7 +5,7 @@ You just start it and it works.
 
 I used delphi 7SE and no fancy components to make it.
 
-To run u need project4.dll, which is in this repository too
+To run u need project4.dll (LALCIRCENCDEC).
 
 
 Contrubitors
