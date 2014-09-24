@@ -1,4 +1,4 @@
-﻿using Alivate;
+using Alivate;
 using MaxMind.GeoIP2;
 using PRMasterServer.Data;
 using System;
@@ -36,8 +36,9 @@ namespace PRMasterServer.Servers
 		private byte[] _socketReceivedBuffer;
 
 		// 09 then 4 00's then battlefield2
-        private string _gameName = "battlefield2";
+        private string _gameName = "civ4";//changed from battlefield2
 		private byte[] _initialMessage;
+
 
 		public ServerListReport(IPAddress listen, ushort port, Action<string, string> log, Action<string, string> logError, string gameName)
 		{
@@ -45,7 +46,9 @@ namespace PRMasterServer.Servers
             List<byte> initialMessage = new byte[] { 0x09, 0x00, 0x00, 0x00, 0x00 }.ToList();
             initialMessage.AddRange(Encoding.ASCII.GetBytes(_gameName));
             initialMessage.Add(0x00);
+            //Console.WriteLine("[initial:]" + _initialMessage[0] + _initialMessage[1] + _initialMessage[2] + _initialMessage[3] + _initialMessage[4] + ',' + _initialMessage[5] + ',' + _initialMessage[6] + ',' + _initialMessage[7] + ',' + _initialMessage[8] + ',' + _initialMessage[9]);
             _initialMessage = initialMessage.ToArray();
+            //Console.WriteLine("[initial:]" + _initialMessage[0] + _initialMessage[1] + _initialMessage[2] + _initialMessage[3] + _initialMessage[4] + ',' + _initialMessage[5] + ',' + _initialMessage[6] + ',' + _initialMessage[7] + ',' + _initialMessage[8]);
 
 			Log = log;
 			LogError = logError;
@@ -56,6 +59,7 @@ namespace PRMasterServer.Servers
 
 			Thread = new Thread(StartServer) {
 				Name = "Server Reporting Socket Thread"
+               
 			};
 			Thread.Start(new AddressInfo() {
 				Address = listen,
@@ -68,7 +72,12 @@ namespace PRMasterServer.Servers
 
 			new Thread(StartDynamicInfoReload) {
 				Name = "Dynamic Info Reload Thread"
+                
 			}.Start();
+
+
+            
+
 		}
 
 		public void Dispose()
@@ -193,6 +202,7 @@ namespace PRMasterServer.Servers
 
 			try {
 				_socket.ReceiveFromAsync(_socketReadEvent);
+                
 			} catch (SocketException e) {
 				LogError(Category, "Error receiving data");
 				LogError(Category, e.ToString());
@@ -202,27 +212,60 @@ namespace PRMasterServer.Servers
 
 		private void OnDataReceived(object sender, SocketAsyncEventArgs e)
 		{
+            LogError("[u a fag]DATA RECIEVED", "BY sERVER lIST rEPORT.cs");
 			try {
 				IPEndPoint remote = (IPEndPoint)e.RemoteEndPoint;
 
 				byte[] receivedBytes = new byte[e.BytesTransferred];
 				Array.Copy(e.Buffer, e.Offset, receivedBytes, 0, e.BytesTransferred);
-				
-				// there by a bunch of different message formats...
+                Console.WriteLine(e.BytesTransferred);
+                //string b1;
+                for (int i = 0; i < e.BytesTransferred;i++)
+                {
+Console.Write(receivedBytes[i]+",");
+                }
+                Console.WriteLine(' ');
 
+                    /*             string hexstr;
+                 int i;
+                 for (i = 0; i < e.BytesTransferred; i++)
+                 {
+                     Console.Write(hexstr + i * 2, "%02x", receivedBytes[i]);
+                 }*/
+
+                    //hexstr[i*2] = 0;
+ 
+                 //   Log("time on console", ":");
+                //Console.WriteLine("[recieved:]"+ receivedBytes[0] + receivedBytes[1] + receivedBytes[2] + receivedBytes[3] + receivedBytes[4]);// + ',' + receivedBytes[5] + ',' + receivedBytes[6] + ',' + receivedBytes[7] + ',' + receivedBytes[8]);// + System.Text.Encoding.ASCII.GetString(receivedBytes));
+                //Console.WriteLine("[initial:]" +_initialMessage[0] + _initialMessage[1] + _initialMessage[2] + _initialMessage[3] + _initialMessage[4]);// + ',' + _initialMessage[5] + ',' + _initialMessage[6] + ',' + _initialMessage[7] + ',' + _initialMessage[8]);//+ ',' + _initialMessage[9]
+
+                Log("[RECIVED(instring):]", System.Text.Encoding.ASCII.GetString(receivedBytes));
+                //Log("time aft console", ":");
                 if (receivedBytes.SequenceEqual(_initialMessage))
                 {
                     // the initial message is basically the gamename, 0x09 0x00 0x00 0x00 0x00 battlefield2
                     // reply back a good response
-                    byte[] response = new byte[] { 0xfe, 0xfd, 0x09, 0x00, 0x00, 0x00, 0x00 };
+                    byte[] response = new byte[] { 0xfe, 0xfd, 0x09, 0x00, 0x05, 0x05, 0x00};//{ 0x0A, 0x00, 0x00, 0x00, 0x00 };//0xfe, 0xfd, 0x09, 0x00, 0x00, 0x00, 0x00 /* added new line & shit, 0x0d, 0x0a*/ };
+                    byte[] response2 = new byte[] { 0xfe, 0xfd, 0x08, 0x06, 0x06, 0x06, 0x06 };
+                    //09 
+                    // is not challenge in bf ?
+                    //could be in civ4 tho
+        
+
+            //Console.WriteLine("[initial:]" + _initialMessage[0] + _initialMessage[1] + _initialMessage[2] + _initialMessage[3] + _initialMessage[4] + ',' + _initialMessage[5] + ',' + _initialMessage[6] + ',' + _initialMessage[7] + ',' + _initialMessage[8] + ',' + _initialMessage[9]);
+
+
+                  
                     _socket.SendTo(response, remote);
+                    //_socket.SendTo(response2, remote);
+                    Log("[response]", System.Text.Encoding.ASCII.GetString(response));
                 }
                 else
                 {
                     if (receivedBytes.Length > 5 && receivedBytes[0] == 0x03)
                     {
                         // this is where server details come in, it starts with 0x03, it happens every 60 seconds or so
-
+                        Console.WriteLine("WHERE SERVER DETAILS COME IN???");
                         byte[] uniqueId = new byte[4];
                         Array.Copy(receivedBytes, 1, uniqueId, 0, 4);
 
@@ -231,12 +274,13 @@ namespace PRMasterServer.Servers
                             // this should be some sort of proper encrypted challenge, but for now i'm just going to hard code it because I don't know how the encryption works...
                             byte[] response = new byte[] { 0xfe, 0xfd, 0x01, uniqueId[0], uniqueId[1], uniqueId[2], uniqueId[3], 0x44, 0x3d, 0x73, 0x7e, 0x6a, 0x59, 0x30, 0x30, 0x37, 0x43, 0x39, 0x35, 0x41, 0x42, 0x42, 0x35, 0x37, 0x34, 0x43, 0x43, 0x00 };
                             _socket.SendTo(response, remote);
+                            Console.WriteLine("[response]PARSINGSERVERDEATILES" + System.Text.Encoding.ASCII.GetString(response));
                         }
                     }
                     else if (receivedBytes.Length > 5 && receivedBytes[0] == 0x01)
                     {
                         // this is a challenge response, it starts with 0x01
-
+                        Console.WriteLine("CHALLENGE RESPONSE");
                         byte[] uniqueId = new byte[4];
                         Array.Copy(receivedBytes, 1, uniqueId, 0, 4);
 
@@ -253,6 +297,7 @@ namespace PRMasterServer.Servers
 
                             AddValidServer(remote);
                         }
+                        Console.WriteLine("[response]" + System.Text.Encoding.ASCII.GetString(clientResponse));
                     }
                     else if (receivedBytes.Length == 5 && receivedBytes[0] == 0x08)
                     {
@@ -260,9 +305,13 @@ namespace PRMasterServer.Servers
 
                         byte[] uniqueId = new byte[4];
                         Array.Copy(receivedBytes, 1, uniqueId, 0, 4);
-
+                        Console.WriteLine("SERVERLISTREPORT PING");
                         RefreshServerPing(remote);
+                        Console.WriteLine("[response]" + System.Text.Encoding.ASCII.GetString(uniqueId));
+
                     }
+                    else if (receivedBytes[0] == 0x09) { Console.WriteLine("CHALLENGE RESPONSE?????"); }
+                    else if (receivedBytes[0] == 0xFE && receivedBytes[1] == 0xFD) { Console.WriteLine("QYERRY??????"); }
                 }
 			} catch (Exception ex) {
 				LogError(Category, ex.ToString());
@@ -287,8 +336,9 @@ namespace PRMasterServer.Servers
 		{
 			string key = String.Format("{0}:{1}", remote.Address, remote.Port);
 			string receivedData = Encoding.UTF8.GetString(data);
-			
-			//Console.WriteLine(receivedData.Replace("\x00", "\\x00").Replace("\x02", "\\x02"));
+
+            Console.WriteLine("PARSING TO:");
+			Console.WriteLine(receivedData.Replace("\x00", "\\x00").Replace("\x02", "\\x02"));
 
 			// split by 000 (info/player separator) and 002 (players/teams separator)
 			// the players/teams separator is really 00, but because 00 may also be used elsewhere (an empty value for example), we hardcode it to 002
@@ -297,8 +347,8 @@ namespace PRMasterServer.Servers
 			
 			//Console.WriteLine(sections.Length);
 
-			if (sections.Length != 3 && !receivedData.EndsWith("\x00\x00"))
-				return true; // true means we don't send back a response
+			//if (sections.Length != 3 && !receivedData.EndsWith("\x00\x00"))// COMMENTED OUT ON 23.09
+			//	return true; // true means we don't send back a response
 
 			string serverVars = sections[0];
 			//string playerVars = sections[1];
@@ -327,14 +377,20 @@ namespace PRMasterServer.Servers
 			}
 
 			for (int i = 0; i < serverVarsSplit.Length - 1; i += 2) {
-				PropertyInfo property = server.GetType().GetProperty(serverVarsSplit[i]);
-
+               // Console.WriteLine(server.hostname);
+              //  if (server.hostname != "" && serverVarsSplit[i]=="hostname") { }
+                PropertyInfo property = server.GetType().GetProperty(serverVarsSplit[i]);
+                //LogError("doing", "some parsing");
 				if (property == null)
 					continue;
 
 				if (property.Name == "hostname") {
 					// strip consecutive whitespace from hostname
-					property.SetValue(server, Regex.Replace(serverVarsSplit[i + 1], @"\s+", " ").Trim(), null);
+
+                    //if (s11.Length>0)
+                    {
+                        property.SetValue(server, Regex.Replace(serverVarsSplit[i + 1], @"\s+", " ").Trim(), null);
+                    }
 				} else if (property.Name == "bf2_plasma") {
 					// set plasma to true if the ip is in plasmaservers.txt
 					if (PlasmaServers.Any(x => x.Equals(remote.Address)))
@@ -370,45 +426,50 @@ namespace PRMasterServer.Servers
 					property.SetValue(server, serverVarsSplit[i + 1], null);
 				}
 			}
-
-			if (String.IsNullOrWhiteSpace(server.gamename) || !server.gamename.Equals("battlefield2", StringComparison.InvariantCultureIgnoreCase)) {
+            //LogError("doing", "server coming to be valid");
+			if (String.IsNullOrWhiteSpace(server.gamename) || !server.gamename.Equals("civ4"/*changed from battlefield2*/, StringComparison.InvariantCultureIgnoreCase)) {
 				// only allow servers with a gamename of battlefield2
 				return true; // true means we don't send back a response
-			} else if (String.IsNullOrWhiteSpace(server.gamevariant) || !ModWhitelist.ToList().Any(x => SQLMethods.EvaluateIsLike(server.gamevariant, x))) {
+			}/* else if (String.IsNullOrWhiteSpace(server.gamevariant) || !ModWhitelist.ToList().Any(x => SQLMethods.EvaluateIsLike(server.gamevariant, x))) {
 				// only allow servers with a gamevariant of those listed in modwhitelist.txt, or (pr || pr_*) by default
 				return true; // true means we don't send back a response
-			}
+			}*/
 
 			// you've got to have all these properties in order for your server to be valid
+            LogError("doing", "server nearly valid");
 			if (!String.IsNullOrWhiteSpace(server.hostname) &&
-				!String.IsNullOrWhiteSpace(server.gamevariant) &&
-				!String.IsNullOrWhiteSpace(server.gamever) &&
-				!String.IsNullOrWhiteSpace(server.gametype) &&
+				//!String.IsNullOrWhiteSpace(server.gamevariant) &&
+				//!String.IsNullOrWhiteSpace(server.gamever) &&
+				//!String.IsNullOrWhiteSpace(server.gametype) &&
 				!String.IsNullOrWhiteSpace(server.mapname) &&
 				server.hostport > 1024 && server.hostport <= UInt16.MaxValue &&
 				server.maxplayers > 0) {
 				server.Valid = true;
+                LogError("doing", "server valid");
+                
 			}
 
 			// if the server list doesn't contain this server, we need to return false in order to send a challenge
 			// if the server replies back with the good challenge, it'll be added in AddValidServer
-			if (!Servers.ContainsKey(key))
-				return false;
+		//	if (!Servers.ContainsKey(key)){
+		//		return false; }     //        COMMENTED OUT ON 22.09 WILL LOOK INTO IT LATER
 
 			Servers.AddOrUpdate(key, server, (k, old) => {
-				if (!old.Valid && server.Valid) {
+                //if (server.Valid) LogError("doing", "DAFUQ IS OLD");
+				if (old.Valid && server.Valid) {//WAS: if (!old.Valid && server.Valid) {
 					Log(Category, String.Format("Added new server at: {0}:{1} ({2}) ({3})", server.IPAddress, server.QueryPort, server.country, server.gamevariant));
 				}
 
 				return server;
 			});
 
-			return true;
+            return false;//true; commented out 23.09
 		}
 
 		private void AddValidServer(IPEndPoint remote)
 		{
 			string key = String.Format("{0}:{1}", remote.Address, remote.Port);
+            LogError("SERVER", "ADDED");
 			GameServer server = new GameServer() {
 				Valid = false,
 				IPAddress = remote.Address.ToString(),
