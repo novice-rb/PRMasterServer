@@ -1,4 +1,4 @@
-﻿using PRMasterServer.Data;
+using PRMasterServer.Data;
 using Reality.Net.Extensions;
 using Reality.Net.GameSpy.Servers;
 using System;
@@ -15,7 +15,7 @@ namespace PRMasterServer.Servers
 
 		public static byte[] GenerateServerChallenge(ref LoginSocketState state)
 		{
-			state.ServerChallenge = _random.GetString(10);
+			state.ServerChallenge = _random.GetString(8);/*there was 10*/
 			string message = String.Format(@"\lc\1\challenge\{0}\id\1\final\", state.ServerChallenge);
 			return DataFunctions.StringToBytes(message);
 		}
@@ -182,6 +182,24 @@ namespace PRMasterServer.Servers
 		{
 			return DataFunctions.StringToBytes(@"\ka\\final\");
 		}
+
+        public static byte[] StatusResponse(ref LoginSocketState state, Dictionary<string, string> keyValues)
+        {
+         //string cat ="\xff\xff\xff\xff\x67\x65\x74\x73\x65\x72\x76\x65\x72\x73\x52\x65\x73\x70\x6f\x6e\x73\x65\x5c\x45\x4f\x54";//"\x63\x61\x74"; 
+            //string dog = "\xff\xff\xff\xff"+@"getserversResponse\tttttt\t5!.m8\EOT";//@"\status\1\\final\";   
+            //string god = @"\getprofile\\sesskey\" + keyValues["sesskey"].ToUpperInvariant()  + @"\profileid\81246737\id\2\\final\";
+            /*string pot = @"\gamename\civ4\gamever\3.19\location\1\hostname\GameMaster Arena Server\hostpo
+rt\25000\mapname\gmtmap1\gametype\arena\numplayers\12\maxplayers\32\gamemode\ope
+nplaying\timelimit\40\fraglimit\0\teamplay\1\rankedserver\1\player_0\Joe Player\
+score_0\22\deaths_0\21\skill_0\339\ping_0\23\team_0\\player_1\L33t 0n3\score_1\1
+5\deaths_1\7\skill_1\762\ping_1\0\team_1\\player_2\Raptor\score_2\26\deaths_2\11
+\skill_2\564\ping_2\372\team_2\Red\final\\queryid\1.1";*/
+            string pot="";
+            //IS WRONG SHIT
+            // PROPPER STATUS RESPONSE NEEDED
+       //should ther even be response to that?
+            return DataFunctions.StringToBytes(pot);//@"\ka\\final\");
+        }
 
 		public static byte[] SendHeartbeat()
 		{
