@@ -24,7 +24,7 @@ So far I can say that irc server doesnt need to communicate with masterserver. Y
 
 Current progress
 ----------
-It is roughly 50% done yet.
+It is roughly 50% done yet.<br>
   Current directons of development:
     0) investigate no challenge error
     1) test gsSDK peer demos more thoroughly
