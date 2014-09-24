@@ -48,10 +48,11 @@ Credits (in order of importance)
 --
 [Luigi Auriemma](http://aluigi.org) for reverse engineering the GameSpy protocol and encryption.
 --
-[Caledorn], [Zulan] (users on realmsbeyond.net) for running natneg servers
+[Caledorn], [Zulan] - users on realmsbeyond.net, for running natneg servers
 --
 [SexIsBad2TheBone], [DimosEngel] civ4 players (testing)
 --
 [gamespy] for not being too hard encrypted and secretive [Rest in peace]
 --
 [sid meyer and firaxis] for great game
+--
