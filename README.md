@@ -17,7 +17,7 @@ give a man a lobby and he spams shit in it for a life or what is done so far.
 
 More detail about irc server
 ============================
-So far I can say that irc server doesnt need to communicate with masterserver. You can install just normal irc and use GS peerchat server emulator 0.1.3b (http://aluigi.altervista.org/papers.htm#peerchat) from luigi. But it seems to be limited to max 2 clients. I made my own irc server and copied all the needed encrypting stuff from Luigi. I will include the irc server here. It is written in delphi, but it contains dll with encrypting functionality in c++ (this unnecesarily complicates things, but who gives a dong, was fastest way to implement).
+So far I can say that irc server doesnt need to communicate with masterserver. You can install just normal irc and use GS peerchat server emulator 0.1.3b (http://aluigi.altervista.org/papers.htm#peerchat) from luigi. But it seems to be limited to max 2 clients. I made my own irc server and copied all the needed encrypting stuff from Luigi. I will include the irc server here. It is called GSAIRCDTMM. It is written in delphi, but it contains dll(LALCIRCENCDEC) with encrypting functionality in c++ (this unnecesarily complicates things, but who gives a dong, was fastest way to implement).
 
 
 how gamespy server works for nabs
@@ -34,9 +34,11 @@ Setting up the project
 3. Grab the latest [MaxMind GeoIP2 Country](https://www.maxmind.com/en/country) database, or use the free [GeoLite2 Country](http://dev.maxmind.com/geoip/geoip2/geolite2/) database. Put it in the same folder as **PRMasterServer.exe**.
 
 5. Run **PRMasterServer.exe +db logindb.db3 +game civ4 +servers master,login,cdkey,list,natneg**
+
 6. Set up irc server
-6.1. Just run my irc server, doesnt need no configurationing.
-7. To join it you need to configure windows/system32/drivers/etc/hosts file (or redirect dead official gamespy server traffick of the game to the server in other ways). Will include hosts file for hosts testing, redirecting all to 127.0.0.1.
+6.1. Run GSAIRCDTMM, doesnt need no configurationing.
+
+7. To join the lobby from the game you need to configure windows/system32/drivers/etc/hosts file (or redirect dead official gamespy server traffick of the game to the server in other ways). Will include hosts file for hosts testing, redirecting all to 127.0.0.1.
 
 
 Credits (in order of importance)
