@@ -25,15 +25,15 @@ So far I can say that irc server doesnt need to communicate with masterserver. Y
 Current progress
 ----------
 It is roughly 50% done yet.<br>
-  Current directons of development:
-    0) investigate no challenge error
-    1) test gsSDK peer demos more thoroughly
-    2) implement GETCKEY handling in irc
-    3) inspect server responses at ports 28910, 27900 
+  Current directons of development:<br>
+    0) investigate no challenge error<br>
+    1) test gsSDK peer demos more thoroughly<br>
+    2) implement GETCKEY handling in irc<br>
+    3) inspect server responses at ports 28910, 27900 <br>
 
-Current problems:
-1. Serverlist refreshing is glitchy and buggy
-2. Host gets error from time to time (test: maybe only on joining him?) - "sb not responsive"
+Current problems:<br>
+1. Serverlist refreshing is glitchy and buggy<br>
+2. Host gets error from time to time (test: maybe only on joining him?) - "sb not responsive"<br>
 3. Can't join staging rooms - "brandmauer didnt allow" error
 
 
