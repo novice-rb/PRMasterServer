@@ -15,8 +15,10 @@ You can get more of what you want with a kind word and a google, than you can wi
 I am no big coder, but using google is everything that has been needed here (all was largely already done before me, just needed minor adjustments from battlefield). Commenting stuff out and substituting "battlefield" for "civ4" are 2 methods that i have been using the most so far.
 
 
-
-
+WANTED LOGS OF REAL GSSERVER<->CIV4 COMMUNICATIONS
+==================================================
+Logs of wireshark or other software, would help significantly. Currently i dont know what actually was sent.
+I am working with logs from similar games found on google.
 
 
 More detail about irc server
