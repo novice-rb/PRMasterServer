@@ -4,7 +4,7 @@ FFGSSfC4&C4BTS (Fully functional gayspy substitute for civ4bts and civ4 (which i
 
 You can get more of what you want with a kind word and a google, than you can with just a kind word.
 =================
-I am no coder, but using google is everything that has been needed here (all was largely already done before me, just needed minor from battlefield). Commenting stuff and substituting "battlefield" for "civ4" are 2 methods that i have been using the most so far.
+I am no coder, but using google is everything that has been needed here (all was largely already done before me, just needed minor adjustments from battlefield). Commenting stuff and substituting "battlefield" for "civ4" are 2 methods that i have been using the most so far.
 
 
 give a man a lobby and he spams shit in it for a life or what is done so far.
