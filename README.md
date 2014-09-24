@@ -13,6 +13,7 @@ give a man a lobby and he spams shit in it for a life or what is done so far.
 2. Chatting works perfectly (as far as tested) 
 3. Serverbrowsing and shit is currently working lame. Can host game. Others can see the hosted games in the list. But can't join them yet. And refreshing is superglitchy and buggy.
 4. buddying system is not implemented in any way, but nobody needs it especially at this point
+It is roughly 50% done yet.
 
 
 More detail about irc server
