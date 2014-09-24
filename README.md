@@ -17,7 +17,7 @@ give a man a lobby and he spams shit in it for a life or what is done so far.
 
 More detail about irc server
 ============================
-So far I can say that irc server doesnt need to communicate with masterserver. You can install just normal irc and use GS peerchat server emulator 0.1.3b (http://aluigi.altervista.org/papers.htm#peerchat) from luigi. But it seems to be limited to max 2 clients. I made my own irc server and copied all the needed encrypting stuff from Luigi. I will include the irc server here. It is written in delphi, but it contains dll with encrypting functionality in c++ (this unnecesarily complicates things, but who give a dong, was fastest way to implement).
+So far I can say that irc server doesnt need to communicate with masterserver. You can install just normal irc and use GS peerchat server emulator 0.1.3b (http://aluigi.altervista.org/papers.htm#peerchat) from luigi. But it seems to be limited to max 2 clients. I made my own irc server and copied all the needed encrypting stuff from Luigi. I will include the irc server here. It is written in delphi, but it contains dll with encrypting functionality in c++ (this unnecesarily complicates things, but who gives a dong, was fastest way to implement).
 
 
 how gamespy server works for nabs
