@@ -13,12 +13,30 @@ give a man a lobby and he spams shit in it for a life or what is done so far.
 2. Chatting works perfectly (as far as tested) 
 3. Serverbrowsing and shit is currently working lame. Can host game. Others can see the hosted games in the list. But can't join them yet. And refreshing is superglitchy and buggy.
 4. buddying system is not implemented in any way, but nobody needs it especially at this point
-It is roughly 50% done yet.
+
 
 
 More detail about irc server
 ============================
 So far I can say that irc server doesnt need to communicate with masterserver. You can install just normal irc and use GS peerchat server emulator 0.1.3b (http://aluigi.altervista.org/papers.htm#peerchat) from luigi. But it seems to be limited to max 2 clients. I made my own irc server and copied all the needed encrypting stuff from Luigi. I will include the irc server here. It is called GSAIRCDTMM. It is written in delphi, but it contains dll(LALCIRCENCDEC) with encrypting functionality in c++ (this unnecesarily complicates things, but who gives a dong, was fastest way to implement).
+
+
+
+Current progress
+----------
+It is roughly 50% done yet.
+  Current directons of development:
+    0) investigate no challenge error
+    1) test gsSDK peer demos more thoroughly
+    2) implement GETCKEY handling in irc
+    3) inspect server responses at ports 28910, 27900 
+
+Current problems:
+1. Serverlist refreshing is glitchy and buggy
+2. Host gets error from time to time (test: maybe only on joining him?) - "sb not responsive"
+3. Can't join staging rooms - "brandmauer didnt allow" error
+
+
 
 
 how gamespy server works for nabs
