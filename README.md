@@ -2,17 +2,20 @@ FFGSSfC4 (Fully functional gayspy substitute for civ4bts and civ4 (which is base
 ==============================================
 
 
+give a man a lobby and he spams shit in it for a life or what is done so far.
+====================================================
+1. Logging in gamespy interface works like a swiss clock.
+2. Chatting works perfectly good (as far as tested) 
+3. Serverbrowsing and shit is currently working lame. Can host game. Others can see the hosted games in the list. But can't join them yet. And refreshing is superglitchy and buggy.
+4. buddying system is not implemented in any way, but nobody needs it
+
+
 You can get more of what you want with a kind word and a google, than you can with just a kind word.
 =================
 I am no coder, but using google is everything that has been needed here (all was largely already done before me, just needed minor adjustments from battlefield). Commenting stuff out and substituting "battlefield" for "civ4" are 2 methods that i have been using the most so far.
 
 
-give a man a lobby and he spams shit in it for a life or what is done so far.
-====================================================
-1. Logging in gamespy interface works like a swiss clock.
-2. Chatting works perfectly (as far as tested) 
-3. Serverbrowsing and shit is currently working lame. Can host game. Others can see the hosted games in the list. But can't join them yet. And refreshing is superglitchy and buggy.
-4. buddying system is not implemented in any way, but nobody needs it especially at this point
+
 
 
 
