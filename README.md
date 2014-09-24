@@ -54,8 +54,7 @@ Setting up the project
 
 5. Run **PRMasterServer.exe +db logindb.db3 +game civ4 +servers master,login,cdkey,list,natneg**
 
-6. Set up irc server
-6.1. Run GSAIRCDTMM, doesnt need no configurationing.
+6. Set up irc server - run GSAIRCDTMM, doesnt need no configurationing.
 
 7. To join the lobby from the game you need to configure windows/system32/drivers/etc/hosts file (or redirect dead official gamespy server traffick of the game to the server in other ways). Will include hosts file for hosts testing, redirecting all to 127.0.0.1.
 
