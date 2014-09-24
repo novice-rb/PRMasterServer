@@ -1,23 +1,29 @@
-PRMasterServer
-==============
+FFGSSfC4&C4BTS (Fully functional gayspy substitute for civ4bts and civ4 (which is based on https://github.com/novice-rb/PRMasterServer))
+==============================================
 
-A GameSpy replacement Master Server for [Project Reality: BF2](http://www.realitymod.com). This emulates the GameSpy API in order to keep PR:BF2 playable after the Battlefield 2 GameSpy shutdown.
 
-Features
----------------------
-Supports **Battlefield 2**'s GameSpy implementation. No other games are supported (yet?). If you wish to modify the code and add support for your game, or add any additional features, please feel free to make a **fork** and submit a [pull request](https://help.github.com/articles/using-pull-requests).
+You can get more of what you want with a kind word and a google, than you can with just a kind word.
+=================
+I am no coder, but using google is everything that has been needed here (all was largely already done before me, just needed minor from battlefield). Commenting stuff and substituting "battlefield" for "civ4" are 2 methods that i have been using the most so far.
 
-- Login Server (Uses SQLite for the database)
-    - Creating Accounts
-    - Retrieving accounts by username/email (allows multiple accounts per email)
-    - Log in
-- Server Browser
-    - Server Reporting (Game Server registering with Master Server)
-    - Server Retrieval (Client requesting a server list)
-    - Supports filters
-    - GeoIP
-- CD Key Authentication
-    - Accepts all CD Keys with no further checks.
+
+give a man a lobby and he spams shit in it for a life or what is done so far.
+====================================================
+1. Logging in gamespy interface works like a swiss clock.
+2. Chatting works perfectly (as far as tested) 
+3. Serverbrowsing and shit is currently working lame. Can host game. Others can see the hosted games in the list. But can't join them yet. And refreshing is superglitchy and buggy.
+4. buddying system is not implemented in any way, but nobody needs it especially at this point
+
+
+More detail about irc server
+============================
+So far I can say that irc server doesnt need to communicate with masterserver. You can install just normal irc and use GS peerchat server emulator 0.1.3b (http://aluigi.altervista.org/papers.htm#peerchat) from luigi. But it seems to be limited to max 2 clients. I made my own irc server and copied all the needed encrypting stuff from Luigi. I will include the irc server here. It is written in delphi, but it contains dll with encrypting functionality in c++ (this unnecesarily complicates things, but who give a dong, was fastest way to implement).
+
+
+how gamespy server works for nabs
+============================
+Here ill write some bullshit for nabs
+
 
 Setting up the project
 ---------------------
@@ -27,22 +33,19 @@ Setting up the project
 
 3. Grab the latest [MaxMind GeoIP2 Country](https://www.maxmind.com/en/country) database, or use the free [GeoLite2 Country](http://dev.maxmind.com/geoip/geoip2/geolite2/) database. Put it in the same folder as **PRMasterServer.exe**.
 
-4. Create a **modwhitelist.txt** file containing line separated mod names (i.e. bf2, pr, fh2) to allow servers running these mods to register with the master server. Or, just use **%** to allow all mods. If you don't have a **modwhitelist.txt** file, it will default to Project Reality: BF2 mod names (*pr* and *pr!_%*).
-> **Tip:** % is wildcard, _ is placeholder, ! is escape, # at the start of the line is a comment, empty lines are ignored.
+5. Run **PRMasterServer.exe +db logindb.db3 +game civ4 +servers master,login,cdkey,list,natneg**
+6. Set up irc server
+6.1. Just run my irc server, doesnt need no configurationing.
+7. To join it you need to configure windows/system32/drivers/etc/hosts file (or redirect dead official gamespy server traffick of the game to the server in other ways). Will include hosts file for hosts testing, redirecting all to 127.0.0.1.
 
-5. Run **PRMasterServer.exe +db LoginDatabase.db3** and it should start up with no errors. You can use an optional **+bind xxx.xxx.xxx.xxx** paramter to bind the server to a specific network interface, or by default it will bind to all available interfaces.
-
-6. If there's issues, unlucky, I'm sure you'll be able to figure them out :).
-    
-Stuff to do
----------------------
-Of course, no project is ever really *complete*, there's plenty of other stuff that could be done. Maybe in the future it just might happen.
-
-- Comment the code so you poor folk can understand the black magic.
-- Manage account protocol (delete accounts, change password, change email).
-- Maybe support some other games than just Battlefield 2. But isn't that the point of open sourcing and putting it on GitHub? If you  want it, make a fork and do it ;).
 
 Credits
 ---------------------
 
 [Luigi Auriemma](http://aluigi.org) for reverse engineering the GameSpy protocol and encryption.
+[novice-rb] for natneg
+[AncientMan2002] for original masterserver
+[Caledorn], [Zulan] (users on realmsbeyond.net) for running natneg servers
+[SexIsBad2TheBone], [DimosEngel] civ4 players (testing)
+[gamespy] for not being too hard encrypted and secretive [Rest in peace]
+[sid meyer and firaxis] for great game
