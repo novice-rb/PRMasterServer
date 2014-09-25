@@ -1,4 +1,4 @@
-FFGSSfC4 (Fully functional gayspy substitute for civ4bts and civ4 (which is based on https://github.com/novice-rb/PRMasterServer))
+FFGSSfC4 (Fully functional(not yet) gayspy substitute for civ4bts and civ4 (which is based on https://github.com/novice-rb/PRMasterServer))
 ==============================================
 
 
