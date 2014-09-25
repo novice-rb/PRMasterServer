@@ -1,4 +1,4 @@
-﻿using PRMasterServer.Data;
+using PRMasterServer.Data;
 using PRMasterServer.Servers;
 using System;
 using System.Globalization;
@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading;
 using System.Linq;
 using System.Collections.Generic;
+//using serverlistretrieve;
 
 namespace PRMasterServer
 {
@@ -17,8 +18,10 @@ namespace PRMasterServer
     /// PRMasterServer.exe +game civ4bts +servers master,natneg
     /// 
     /// </summary>
+    
 	class Program
 	{
+        
 		private static readonly object _lock = new object();
 
 		static void Main(string[] args)
@@ -35,12 +38,30 @@ namespace PRMasterServer
 				}
 			};
 
+            Action<string, string> logGreen = (category, message) =>
+            {
+                lock (_lock)
+                {
+                    LogGreen(String.Format("[{0}] {1}", category, message));
+                }
+            };
+            Action<string, string> logBlue = (category, message) =>
+            {
+                lock (_lock)
+                {
+                    LogBlue(String.Format("[{0}] {1}", category, message));
+                }
+            };
+
             bool runLoginServer = true;
-            bool runNatNegServer = false;
+            bool runNatNegServer = true;
             bool runCdKeyServer = true;
             bool runMasterServer = true;
             bool runListServer = true;
             string gameName = null;
+            //string supportedgamename = "civ4bts";
+                        LogError("dis is gona be good");
+                        LogGreen("Use /help command to get server's attention");
 
             IPAddress bind = IPAddress.Any;
             if (args.Length >= 1)
@@ -112,7 +133,7 @@ namespace PRMasterServer
                 ServerListReport serverListReport = new ServerListReport(bind, 27900, log, logError, gameName);
                 if (runListServer)
                 {
-                    ServerListRetrieve serverListRetrieve = new ServerListRetrieve(bind, 28910, serverListReport, log, logError);
+                    ServerListRetrieve serverListRetrieve = new ServerListRetrieve(bind, 28910/*CHANGED FROM 28910*/, serverListReport, log, logError);
                 }
             }
             if (runNatNegServer)
@@ -125,11 +146,36 @@ namespace PRMasterServer
             }
 
 			while (true) {
-				Thread.Sleep(1000);
+                
+                string s = Console.ReadLine();
+                if (s == "/help") 
+                { 
+                    LogBlue("kay, dis some help for ye:"); 
+                    LogBlue("/help - to get help;"); 
+                    LogBlue("/sendF27900 X - send from (supposedly) SB, where X are hex symbols separated with commas to be sent, example: /sendF27900 0x00,0x06,0x06,0x06"); 
+               
+                
+                
+                } else
+                    if (s == "/sendF27900 B") 
+                {
+                    LogBlue("Command: sendF27900...");
+                       // PRMasterServer.Servers.ServerListRepor
+                    try {
+                        //PRMasterServer.Servers.
+                      //  SendToClient();
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError("DIS IS AN ERORR AGAIN NOOB"+ ex.ToString());
+                    }
+
+                    };
+				Thread.Sleep(500);
 			}
 		}
 
-		private static void Log(string message)
+		public static void Log(string message)
 		{
 			Console.WriteLine(String.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture), message));
 		}
@@ -141,5 +187,20 @@ namespace PRMasterServer
 			Console.Error.WriteLine(String.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture), message));
 			Console.ForegroundColor = c;
 		}
+
+        private static void LogGreen(string message)
+        {
+            ConsoleColor c = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Error.WriteLine(String.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture), message));
+            Console.ForegroundColor = c;
+        }
+        private static void LogBlue(string message)
+        {
+            ConsoleColor c = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Error.WriteLine(String.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture), message));
+            Console.ForegroundColor = c;
+        }
 	}
 }
